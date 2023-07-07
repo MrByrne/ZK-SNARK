@@ -1,0 +1,85 @@
+<!-- This code works!! -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BattleSNARKs</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+</head>
+    
+<body>
+    <div id="readArea"> <!-- READING FROM CONTRACT -->
+        
+        <!-- ----- Function 1 ----- -->
+        <button onclick="connectMetamask()">CONNECT TO METAMASK</button>
+        <p id="userArea">Status: Not connected to Metamask</p>
+         <!-- index html to meta-->
+        
+        <!-- ----- Function 2 ----- -->
+        <button onclick="connectContract()">CONNECT TO CONTRACT</button>
+        <p id="contractArea">Status: Not connected to Contract</p>
+        <!-- meta to SC -->
+
+        <button onclick="callVerifyTx()">VERIFY THE PROOF</button>
+        <p id="balanceArea">Balance: Not Connected to Contract</p>
+        <!-- Calling the function designed in Transactions.sol get balance -->
+
+    </div>
+    <script> // the below script code is convention in web3 in forming the communication with Web
+
+        // --------- Function 1 ------------
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined") {
+                const accounts = await ethereum.request({method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("userArea").innerHTML = `User Account: ${account}`;
+            }
+        }
+        
+        // --------- Function 2 ------------
+        const ABI = [{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"X","type":"uint256"},{"internalType":"uint256","name":"Y","type":"uint256"}],"internalType":"struct Pairing.G1Point","name":"a","type":"tuple"},{"components":[{"internalType":"uint256[2]","name":"X","type":"uint256[2]"},{"internalType":"uint256[2]","name":"Y","type":"uint256[2]"}],"internalType":"struct Pairing.G2Point","name":"b","type":"tuple"},{"components":[{"internalType":"uint256","name":"X","type":"uint256"},{"internalType":"uint256","name":"Y","type":"uint256"}],"internalType":"struct Pairing.G1Point","name":"c","type":"tuple"}],"internalType":"struct Verifier.Proof","name":"proof","type":"tuple"},{"internalType":"uint256[2]","name":"input","type":"uint256[2]"}],"name":"verifyTx","outputs":[{"internalType":"bool","name":"r","type":"bool"}],"stateMutability":"view","type":"function"}];
+        const Address = "0x1f9EDCDD004606Fae03Bc8a63D176d40c36CEb2A"; // Taking Address from Remix 
+        //const contract = new web3.eth.Contract(ABI, Address);
+
+        const connectContract = async () => {
+            window.web3 = await new Web3(window.ethereum);
+            window.contract = await new window.web3.eth.Contract(ABI, Address);
+            document.getElementById("contractArea").innerHTML = Address; //"Connected to Contract"; // calling the elementID above
+        }
+
+        // --------- Function 3 ------------
+        const callVerifyTx = async () => {
+        const proof = [
+            [
+                "0x152c130a46fd329b01201fe90f29295f1dc209f09d45c48647aacc1c9727cfc8",
+                "0x2fe0e10074b8ccd2132fca21dfc71200380e03648dcb81d722849b0c7f84f80c",
+            ],
+            [
+                [
+                    "0x2e6d6f3044a9cecb827bf9fbb3457dde27f087c926f1c4dc5956f4011cea7959",
+                    "0x122b050f85632589b7c8040668f3b38d57a4801885cf8559d83dc75ae74620fb",
+                ],
+                [
+                    "0x000a9200c71b367f925eb4904e797e6a7d883334a1f4dae271b3ac521c7129f9",
+                    "0x0540153b975fac29c3ce12090ce3d7e833fcd37bdc48c61c3b61bcff4a3b9daa",
+                ],
+            ],
+            [
+                "0x0aee5d0c5fd15a0f2e2227f46a3e9930c98207cd2c165782a247659d7b2ce67e",
+                "0x035268644363d2663bdf312e46d967089c48f6478a129d2e7fab5fb2e0577e98",
+            ],
+        ];
+
+            const input = [2, 0];
+            const data = await window.contract.methods.verifyTx(proof, input).call();
+            document.getElementById("balanceArea").innerHTML = `Contract Balance: ${data}`;
+        }
+
+    </script>
+</body>
+</html>
+
+
+
+
