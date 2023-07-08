@@ -21,6 +21,7 @@
         <!-- meta to SC -->
 
         <button onclick="callVerifyTx()">VERIFY THE PROOF</button>
+        <input type="number" id="myGuess" placeholder="Enter number here">
         <p id="balanceArea">Balance: Not Connected to Contract</p>
         <!-- Calling the function designed in Transactions.sol get balance -->
 
@@ -50,30 +51,38 @@
 
         // --------- Function 3 ------------
         const callVerifyTx = async () => {
-        const proof = [
-            [
-                "0x152c130a46fd329b01201fe90f29295f1dc209f09d45c48647aacc1c9727cfc8",
-                "0x2fe0e10074b8ccd2132fca21dfc71200380e03648dcb81d722849b0c7f84f80c",
-            ],
-            [
+            const proof = [
                 [
-                    "0x2e6d6f3044a9cecb827bf9fbb3457dde27f087c926f1c4dc5956f4011cea7959",
-                    "0x122b050f85632589b7c8040668f3b38d57a4801885cf8559d83dc75ae74620fb",
+                    "0x152c130a46fd329b01201fe90f29295f1dc209f09d45c48647aacc1c9727cfc8",
+                    "0x2fe0e10074b8ccd2132fca21dfc71200380e03648dcb81d722849b0c7f84f80c",
                 ],
                 [
-                    "0x000a9200c71b367f925eb4904e797e6a7d883334a1f4dae271b3ac521c7129f9",
-                    "0x0540153b975fac29c3ce12090ce3d7e833fcd37bdc48c61c3b61bcff4a3b9daa",
+                    [
+                        "0x2e6d6f3044a9cecb827bf9fbb3457dde27f087c926f1c4dc5956f4011cea7959",
+                        "0x122b050f85632589b7c8040668f3b38d57a4801885cf8559d83dc75ae74620fb",
+                    ],
+                    [
+                        "0x000a9200c71b367f925eb4904e797e6a7d883334a1f4dae271b3ac521c7129f9",
+                        "0x0540153b975fac29c3ce12090ce3d7e833fcd37bdc48c61c3b61bcff4a3b9daa",
+                    ],
                 ],
-            ],
-            [
-                "0x0aee5d0c5fd15a0f2e2227f46a3e9930c98207cd2c165782a247659d7b2ce67e",
-                "0x035268644363d2663bdf312e46d967089c48f6478a129d2e7fab5fb2e0577e98",
-            ],
-        ];
+                [
+                    "0x0aee5d0c5fd15a0f2e2227f46a3e9930c98207cd2c165782a247659d7b2ce67e",
+                    "0x035268644363d2663bdf312e46d967089c48f6478a129d2e7fab5fb2e0577e98",
+                ],
+            ];
 
-            const input = [2, 0];
+            //const input = [2, 0];
+            var inputValue = document.getElementById("myGuess").value;
+            const input = [inputValue, 0];
             const data = await window.contract.methods.verifyTx(proof, input).call();
-            document.getElementById("balanceArea").innerHTML = `Contract Balance: ${data}`;
+            if (data == true) {
+                document.getElementById("balanceArea").innerHTML = `Contract Balance: You win!`;
+            }
+            else {
+                document.getElementById("balanceArea").innerHTML = `Contract Balance: You Lose!`;
+            }
+            //document.getElementById("balanceArea").innerHTML = `Contract Balance: ${data}`;
         }
 
     </script>
